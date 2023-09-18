@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "listaEstablecimientos": ["3", "4", "5", "7"],
+    "listaServicios": ["3", "4"],
+    "gradoConfianza": 5,
+    "listaMiembros": ["5", "6"],
+    "propuestasDeFusion": [{
+
+
+    }]
+  },
+  {
+    "id": 2,
+    "listaEstablecimientos": ["3", "4", "5", "7"],
+    "listaServicios": ["3", "4"],
+    "gradoConfianza": 5,
+    "listaMiembros": ["5", "6"],
+    "propuestasDeFusion": [{
+    }]
+  },
+  {
+    "id": 3,
+    "listaEstablecimientos": [
+      "3",
+      "4"
+    ],
+    "listaServicios": [
+      "1",
+      "2"
+    ],
+    "gradoConfianza": 5,
+    "listaMiembros": [
+      "5",
+      "6"
+    ],
+    "propuestasDeFusion": [{
+
+      }]
+  },
+  {
+  "id": 4,
+  "listaEstablecimientos": ["3", "4"],
+  "listaServicios": ["1", "2"],
+  "gradoConfianza": 5,
+  "listaMiembros": ["5", "6"],
+    "propuestasDeFusion": [{
+
+
+    }]
+  }
+]

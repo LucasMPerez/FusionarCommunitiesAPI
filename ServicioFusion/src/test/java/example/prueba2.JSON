@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "listaEstablecimientos": ["3", "4", "5", "7"],
+    "listaServicios": ["1", "2"],
+    "gradoConfianza": 5,
+    "listaMiembros": ["5", "6"]
+  },
+  {
+    "id": 2,
+    "listaEstablecimientos": ["3", "4", "5", "1"],
+    "listaServicios": ["3", "4"],
+    "gradoConfianza": 4,
+    "listaMiembros": ["8", "9"]
+  }
+]
