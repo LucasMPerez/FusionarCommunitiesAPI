@@ -1,6 +1,7 @@
 package Controller;
 
 import Service.ApiFusion;
+import Service.Propuesta;
 import Service.RegistroEntrada;
 import io.javalin.Javalin;
 
@@ -10,7 +11,7 @@ import java.util.List;
 public class FusionController {
 
     private Javalin app;
-    private List<RegistroEntrada> propuestas;
+    private List<Propuesta> propuestas;
     public FusionController(Javalin app){
         this.app = app;
         this.propuestas = new ArrayList<>();
@@ -23,7 +24,7 @@ public class FusionController {
 
         app.post("/propuestas", ctx -> {
             ApiFusion api = new ApiFusion(); // INICIO DE LA API
-            this.propuestas = api.propuestasFusiones(registro);
+            this.propuestas = api.propuestasDeFusion(registro);
             // Envía una respuesta con un mensaje que confirme la creación de las propuestas
             ctx.result("  Propuestas agregadas ");
         });

@@ -6,6 +6,7 @@ import Service.ApiFusion;
 import Service.RegistroEntrada;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import io.javalin.openapi.plugin.swagger.SwaggerConfiguration;
@@ -34,15 +35,12 @@ public class  Main {
 
         File jsonFile = new File(urlJson); // PRUEBA DEL JSON
         ObjectMapper objectMapper = new ObjectMapper(); // MAPEA EL JSON PARA TRANSFORMARLO EN LA LISTA
+        objectMapper.registerModule(new JavaTimeModule());
         List<RegistroEntrada> registros = new ArrayList<>();
         registros = objectMapper.readValue(jsonFile, new TypeReference<List<RegistroEntrada>>() {});
 
-        ApiFusion api = new ApiFusion(); // INICIO DE LA API
-     //   List<RegistroEntrada> propuestaAceptada = api.aceptarFusion(registros);
-
         FusionController fusionController = new FusionController(app);
         ComunidadController comunidadController = new ComunidadController(app,registros);
-
 
         // CONTROLADORES FUSION
         fusionController.agregarPropuesta(registros); // POST
@@ -52,7 +50,7 @@ public class  Main {
         comunidadController.verRegistros(); // GET
         comunidadController.verRegistroPorID(); // GET x ID
         comunidadController.agregarRegistro(); // POST
-    //    comunidadController.aceptarPropuesta(propuestaAceptada); // PUT
+        comunidadController.aceptarPropuesta(); // PUT
 
 
         // Agregar en json las propuestas de fusion.

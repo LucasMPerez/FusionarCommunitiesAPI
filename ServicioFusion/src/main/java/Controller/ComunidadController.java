@@ -1,5 +1,6 @@
 package Controller;
 
+import Service.ApiFusion;
 import Service.RegistroEntrada;
 import io.javalin.Javalin;
 
@@ -57,9 +58,11 @@ public class ComunidadController {
     }
 
     // @PUT
-    public void aceptarPropuesta(List<RegistroEntrada> nuevoRegistro){
+    public void aceptarPropuesta(){
         app.put("/comunidades", ctx -> {
-            this.registros = nuevoRegistro;
+            ApiFusion api = new ApiFusion();
+            List<RegistroEntrada> propuestaAceptada = api.aceptarFusion(registros);
+            this.registros = propuestaAceptada;
             ctx.status(200);
         });
     }

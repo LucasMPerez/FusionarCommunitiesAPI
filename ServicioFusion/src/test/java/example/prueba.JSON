@@ -2,40 +2,29 @@
   {
     "id": 1,
     "listaEstablecimientos": ["3", "4", "5", "7"],
-    "listaServicios": ["3", "4"],
+    "listaServicios": ["3", "4", "5"],
     "gradoConfianza": 5,
-    "listaMiembros": ["5", "6"],
-    "propuestasDeFusion": [{
+    "listaMiembros": ["5", "6","7","8"],
+    "propuestasDeFusion": [{}]
+  }
 
-
-    }]
-  },
+,
   {
     "id": 2,
-    "listaEstablecimientos": ["3", "4", "5", "7"],
-    "listaServicios": ["3", "4"],
+    "listaEstablecimientos": ["3", "4", "5", "6", "7"],
+    "listaServicios": ["3", "4", "5", "6"],
+    "gradoConfianza": 5,
+    "listaMiembros": ["5", "6", "7"],
+    "propuestasDeFusion": [{}]
+  }
+,
+  {
+    "id": 3,
+    "listaEstablecimientos": ["3", "4"],
+    "listaServicios": ["1", "2"],
     "gradoConfianza": 5,
     "listaMiembros": ["5", "6"],
     "propuestasDeFusion": [{
-    }]
-  },
-  {
-    "id": 3,
-    "listaEstablecimientos": [
-      "3",
-      "4"
-    ],
-    "listaServicios": [
-      "1",
-      "2"
-    ],
-    "gradoConfianza": 5,
-    "listaMiembros": [
-      "5",
-      "6"
-    ],
-    "propuestasDeFusion": [{
-
       }]
   },
   {
@@ -45,8 +34,15 @@
   "gradoConfianza": 5,
   "listaMiembros": ["5", "6"],
     "propuestasDeFusion": [{
-
-
+    }]
+  },
+  {
+    "id": 5,
+    "listaEstablecimientos": ["3", "4"],
+    "listaServicios": ["1", "2"],
+    "gradoConfianza": 5,
+    "listaMiembros": ["5", "6"],
+    "propuestasDeFusion": [{
     }]
   }
 ]

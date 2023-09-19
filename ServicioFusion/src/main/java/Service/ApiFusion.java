@@ -1,5 +1,12 @@
 package Service;
 
+import Service.CondicionDeFusion.CondicionDeFusion;
+import Service.CondicionDeFusion.RechazoDePropuesta;
+import Service.CriteriosDeFusion.CantidadDeEstablecimientos;
+import Service.CriteriosDeFusion.CantidadDeMiembros;
+import Service.CriteriosDeFusion.CantidadDeServicios;
+import Service.CriteriosDeFusion.CriterioDeFusion;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,13 +18,15 @@ import java.util.stream.Collectors;
 public class ApiFusion {
     private List<CriterioDeFusion> criterios;
     private List<RegistroEntrada> registrosAFusionar;
+    private CondicionDeFusion condicionDeFusion;
     public ApiFusion(){
         this.criterios = new ArrayList<>();
         this.registrosAFusionar = new ArrayList<>();
+        this.criterios.add(new CantidadDeServicios(0.75));
         this.criterios.add(new CantidadDeMiembros(0.75));
         this.criterios.add(new GradoDeConfianza());
-        this.criterios.add(new CantidadDeServicios(0.75));
         this.criterios.add(new CantidadDeEstablecimientos(0.75));
+        this.condicionDeFusion = new RechazoDePropuesta();
 
     }
 
@@ -29,28 +38,41 @@ public class ApiFusion {
                 .isPresent();
     }
 
+    public List<Propuesta> propuestasDeFusion(List<RegistroEntrada> registros ){
+        this.registrosAFusionar = registros.stream().filter(unRegistro -> criterios.stream().allMatch(unCriterio-> this.esFusionable(unRegistro,registros,unCriterio))).collect(Collectors.toList());
+        Set<Integer> comunidadesAgregadas = new HashSet<>();
+        Set<Propuesta> propuestasDeFusion = new HashSet<>();
+
+        for (RegistroEntrada unRegistro : registrosAFusionar) {
+            Propuesta unaPropuesta = new Propuesta();
+            List<RegistroEntrada> conjuntoPropuestas = registrosAFusionar.stream()
+                    .filter(otroRegistro -> criterios.stream().allMatch(f -> f.cumple(otroRegistro, unRegistro)))
+                    .toList();
+
+
+            List<Integer> idConjunto = conjuntoPropuestas.stream().map(RegistroEntrada::getId).toList();
+            // Filtra las comunidades que aún no se han agregado a ninguna propuesta
+            List<Integer> comunidadesNoAgregadas = idConjunto.stream()
+                    .filter(comunidadId -> !comunidadesAgregadas.contains(comunidadId))
+                    .toList();
+
+            // Agrega las comunidades a la propuesta actual y marca como agregadas
+            unaPropuesta.setIdComunidades(comunidadesNoAgregadas);
+            comunidadesAgregadas.addAll(comunidadesNoAgregadas);
+            // Solo agrega la propuesta si tiene comunidades
+            if (condicionDeFusion.satisface(unRegistro,idConjunto) && !comunidadesNoAgregadas.isEmpty()) {
+                unaPropuesta.setFecha(LocalDate.now());
+                propuestasDeFusion.add(unaPropuesta);
+            }
+        }
+       return propuestasDeFusion.stream().toList();
+    }
+
     public List<RegistroEntrada> propuestasFusiones(List<RegistroEntrada> registros ) {
-
-            this.registrosAFusionar = registros.stream().filter(unRegistro -> criterios.stream().allMatch(unCriterio-> this.esFusionable(unRegistro,registros,unCriterio))).collect(Collectors.toList());
-            //[ [1,2,3] , [4,5] ] ----- [ [1,2],[1,3],[4,5] ]
-            // [1,2,3,4] ==> 1
-
-            if( !this.registrosAFusionar.isEmpty() ) {
-                RegistroEntrada unRegistro =  registrosAFusionar.get(0);
-                this.registrosAFusionar = registrosAFusionar.stream().filter(otroRegistro-> criterios.stream().allMatch(f->f.cumple(otroRegistro,unRegistro)) ).toList();
-
-                Propuesta unaPropuestaNueva = new Propuesta();
-                unaPropuestaNueva.setFecha(LocalDate.now());
-                unaPropuestaNueva.setIdComunidades( registrosAFusionar.stream().map(f->f.getId()).collect(Collectors.toList()) );
-
-                registrosAFusionar.forEach(f->f.agregarPropuesta(unaPropuestaNueva));
-                return registrosAFusionar;
-               }
-            else {
-                System.out.println("No hay ningun registro para fusionar");
-                return null;
-                }
-
+        Propuesta unaPropuesta = this.propuestasDeFusion(registros).get(0);
+        List<RegistroEntrada> registrosFiltrados = registros.stream().filter(f->unaPropuesta.getIdComunidades().contains(f.getId())).toList();
+        registrosFiltrados.forEach(f->f.agregarPropuesta(unaPropuesta));
+        return registrosFiltrados;
 
     }
 
@@ -70,10 +92,11 @@ public class ApiFusion {
         registroFusionado.setListaMiembros(miembros);
         registroFusionado.setListaEstablecimientos(establecimientos);
 
-        registros = this.eliminarRegistrosPorID(registros,registrosAFusionar);
+        registros.removeIf(f->f.getId() == registrosAFusionar.get(0).getId() || f.getId() == registrosAFusionar.get(1).getId());
         List<RegistroEntrada> registrosNuevos = new ArrayList<>(registros);
         registrosNuevos.add(registroFusionado); // Porque registros es inmutable
         return registrosNuevos;
+
     }
 
     private static <T> List<T> unionSinRepetidos(List<T> lista1, List<T> lista2) {
@@ -83,15 +106,6 @@ public class ApiFusion {
             conjunto.add(elemento);
         }
         return new ArrayList<>(conjunto);
-    }
-
-    private static List<RegistroEntrada> eliminarRegistrosPorID(List<RegistroEntrada> registrosUno, List<RegistroEntrada> registroDos) {
-        List<Integer> idsRegistroDos = registroDos.stream().map(RegistroEntrada::getId).toList();
-        List<RegistroEntrada> registrosFiltrados = registrosUno.stream()
-                .filter(registro -> !idsRegistroDos.contains(registro.getId()))
-                .toList();
-
-        return registrosFiltrados;
     }
 
 }

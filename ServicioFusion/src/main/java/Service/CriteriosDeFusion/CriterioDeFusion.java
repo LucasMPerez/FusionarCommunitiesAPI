@@ -1,4 +1,6 @@
-package Service;
+package Service.CriteriosDeFusion;
+
+import Service.RegistroEntrada;
 
 public interface CriterioDeFusion {
 
